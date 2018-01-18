@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<title>Arduino Port Control</title>
+	<meta charset="utf-8" />
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
+	<style type="text/css">
+		.unknowStatus{background-color:#6c6d6f; width:45px; height:45px;margin:1px; float:left;}
+		.disabled {background-color:#932626; width:45px; height:45px;margin:1px; float:left;}
+		.enabled {background-color:#36ab36; width:45px; height:45px; margin:1px; float:left;}
+		
+</style>
+</head>
+
+<body>
+	<script type="text/javascript">
+		function successResponse(data, textStatus, jqXHR)
+		{
+			$('#port13').attr("class", (data[0]=='0')?'disabled':'enabled');
+                       $('#port12').attr("class", (data[1]=='0')?'disabled':'enabled');
+                       $('#port11').attr("class", (data[2]=='0')?'disabled':'enabled');
+                       $('#port10').attr("class", (data[3]=='0')?'disabled':'enabled');
+                       $('#port09').attr("class", (data[4]=='0')?'disabled':'enabled');	
+		}
+		
+		function errorResponse(data, textStatus, jqXHR)
+		{
+			$('#port13').attr("class", 'unknowStatus');
+                        $('#port12').attr("class", 'unknowStatus');
+                       $('#port11').attr("class", 'unknowStatus');
+                       $('#port10').attr("class", 'unknowStatus');
+                       $('#port09').attr("class", 'unknowStatus');	
+		}
+		
+		$(document).ready(function() 
+		{
+			$('#update').click(function() 
+			{
+				$.ajax({
+                	url:   'http://192.168.0.139:8080/cgi-bin/arduino.py?port='+$('#port').val()+'&value='+$('#value').val(),
+                	type:  'get',
+                    success:  successResponse,
+                    error: errorResponse
+                    
+                 });
+			});
+			
+			$.ajax({
+                	url:   'http://192.168.0.139:8080/cgi-bin/arduino.py?status=1',
+                	type:  'get',
+                    success: successResponse,
+                    error: errorResponse
+                 });
+
+			
+		});
+	</script>
+	<h1>Port Control</h1>
+	<select id="port">
+		<option value="09">Port 9</option>
+  		<option value="10">Port 10</option>
+  		<option value="11">Port 11</option>
+  		<option value="12">Port 12</option>
+  		<option value="13">Port 13</option>
+  	</select>
+  	<select id="value">
+		<option value="1">On</option>
+  		<option value="0">Off</option>
+  	</select>
+  	<button id="update">Update</button>
+  	<h1>Port Status</h1>
+  	<table border="1">
+		<tr>
+			<td>Port 13</td>
+			<td>Port 12</td>
+			<td>Port 11</td>
+			<td>Port 10</td>
+			<td>Port 09</td>
+			
+		</tr>
+		<tr>
+			<td><div id="port13" class="unknowStatus"></div></td>
+			<td><div id="port12" class="unknowStatus"></div></td>
+			<td><div id="port11" class="unknowStatus"></div></td>
+			<td><div id="port10" class="unknowStatus"></div></td>
+			<td><div id="port09" class="unknowStatus"></div></td>
+		</tr>	
+	</table>
+</body>
+</html>
